@@ -1,0 +1,20 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+---
+
+<Layout title="Page Not Found | LOCA">
+  <div class="flex flex-col items-center justify-center min-h-[62vh] text-center px-6 py-20">
+    <p class="font-display text-7xl font-bold text-loca-primary/25 mb-4">404</p>
+    <h1 class="font-display text-3xl font-bold text-loca-dark mb-3">Page not found</h1>
+    <p class="text-gray-600 max-w-md mb-8">
+      The page you are looking for does not exist or has been moved. Try one of these instead:
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4">
+      <a href="/" class="bg-loca-dark text-white px-7 py-3.5 rounded-lg font-bold hover:bg-loca-primary transition-colors">Return Home</a>
+      <a href="/what-we-do" class="border-2 border-gray-200 text-loca-dark px-7 py-3.5 rounded-lg font-bold hover:border-loca-primary hover:text-loca-primary transition-colors">
+        Our Programs <Icon name="arrow-right" class="w-4 h-4 inline" />
+      </a>
+    </div>
+  </div>
+</Layout>

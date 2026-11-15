@@ -1,0 +1,91 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Icon from '../../components/Icon.astro';
+import { getCollection } from 'astro:content';
+
+const areas = (await getCollection('thematic_areas')).sort((a, b) => a.data.order - b.data.order);
+
+const crosscutting = [
+  { icon: 'users', title: 'Gender equality & women’s empowerment', text: 'Promoting equitable participation, leadership and access to services for women and girls.' },
+  { icon: 'heart', title: 'Child safeguarding', text: 'Child-safe approaches, risk assessments, safe referrals and clear reporting procedures.' },
+  { icon: 'sparkles', title: 'Disability inclusion', text: 'Reducing physical, communication, attitudinal and institutional barriers across all programs.' },
+  { icon: 'shield-check', title: 'Protection mainstreaming & do-no-harm', text: 'Designing activities that promote safety, dignity, meaningful access and participation.' },
+  { icon: 'scale', title: 'Conflict sensitivity & social cohesion', text: 'Analyzing local dynamics and promoting fair access without reinforcing tensions.' },
+  { icon: 'book-open', title: 'Climate & environmental sustainability', text: 'Environmental risks and climate considerations inform assessment, design and implementation.' },
+  { icon: 'eye', title: 'Accountability to affected populations', text: 'Accessible information and safe, confidential, responsive feedback channels for communities.' },
+  { icon: 'shield-check', title: 'PSEA & safeguarding', text: 'Zero tolerance for sexual exploitation, abuse and harassment — with prevention, reporting and response measures.' },
+];
+---
+
+<Layout title="What We Do | LOCA" description="LOCA organizes its program portfolio under four integrated thematic areas, from humanitarian response to inclusive development.">
+  <!-- Page hero -->
+  <section class="bg-loca-dark text-white relative overflow-hidden">
+    <div class="absolute -top-24 right-1/4 w-[45vw] h-[35vh] bg-loca-primary/25 blur-[110px] rounded-full pointer-events-none"></div>
+    <div class="container mx-auto px-6 py-20 relative z-10">
+      <p class="text-loca-gold font-bold uppercase tracking-[0.18em] text-sm mb-3 reveal">What We Do</p>
+      <h1 class="font-display text-4xl md:text-5xl font-bold mb-5 reveal">Four thematic areas, one integrated approach</h1>
+      <p class="text-xl text-gray-300 max-w-3xl leading-relaxed reveal" style="--rd:100ms">
+        Our portfolio responds to urgent needs while addressing the underlying drivers of vulnerability — supporting
+        durable, community-led change across Somalia.
+      </p>
+    </div>
+  </section>
+
+  <!-- Thematic areas -->
+  <section class="py-20 bg-white">
+    <div class="container mx-auto px-6">
+      <div class="grid md:grid-cols-2 gap-8">
+        {areas.map((area, i) => (
+          <a
+            href={`/what-we-do/${area.id}`}
+            class="group reveal flex flex-col bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 hover:border-loca-primary/40 transition-all duration-300"
+            style={`--rd:${(i % 2) * 90}ms`}
+          >
+            {area.data.image && (
+              <div class="h-56 overflow-hidden">
+                <img
+                  src={area.data.image}
+                  alt={area.data.title}
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  loading="lazy"
+                  width="1400"
+                  height="933"
+                />
+              </div>
+            )}
+            <div class="p-8 flex flex-col flex-grow">
+              <p class="text-xs font-bold text-loca-primary uppercase tracking-[0.14em] mb-2">Thematic Area {i + 1}</p>
+              <h2 class="font-display text-xl font-bold text-loca-dark mb-3 group-hover:text-loca-primary transition-colors">{area.data.title}</h2>
+              <p class="text-gray-600 text-sm leading-relaxed mb-6 flex-grow">{area.data.description}</p>
+              <span class="inline-flex items-center gap-2 text-loca-primary font-bold text-sm mt-auto">
+                Explore program <Icon name="arrow-right" class="w-4 h-4" />
+              </span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Cross-cutting commitments -->
+  <section class="py-20 bg-loca-sand border-t border-gray-200">
+    <div class="container mx-auto px-6">
+      <div class="max-w-2xl mb-12 reveal">
+        <p class="text-loca-primary font-bold uppercase tracking-[0.18em] text-sm mb-3">Cross-cutting Commitments</p>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-loca-dark mb-4">Applied across every program</h2>
+        <p class="text-gray-600 text-lg">Eight commitments are integrated into assessment, design, implementation and monitoring.</p>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {crosscutting.map((c, i) => (
+          <div class="reveal bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow" style={`--rd:${(i % 4) * 80}ms`}>
+            <div class="w-10 h-10 rounded-lg bg-loca-light text-loca-primary flex items-center justify-center mb-4">
+              <Icon name={c.icon} class="w-5 h-5" />
+            </div>
+            <h3 class="font-bold text-loca-dark text-sm mb-2 leading-snug">{c.title}</h3>
+            <p class="text-sm text-gray-600 leading-relaxed">{c.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>

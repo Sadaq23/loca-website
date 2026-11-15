@@ -1,0 +1,55 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+
+const docs = [
+  { title: 'LOCA Organisational Profile', meta: 'PDF - institutional overview, mandate and systems', href: '/documents/LOCA-Organisational-Profile.pdf', action: 'Download PDF', ready: true },
+  { title: 'Annual Report', meta: 'PDF - program results and financial summary', href: 'mailto:info@localliance.org?subject=Request:%20Annual%20Report', action: 'Request a copy', ready: false },
+  { title: 'PSEA & Safeguarding Policy', meta: 'PDF - prevention of sexual exploitation and abuse', href: 'mailto:info@localliance.org?subject=Request:%20PSEA%20%26%20Safeguarding%20Policy', action: 'Request a copy', ready: false },
+  { title: 'Child Safeguarding Policy', meta: 'PDF - child-safe programming standards', href: 'mailto:info@localliance.org?subject=Request:%20Child%20Safeguarding%20Policy', action: 'Request a copy', ready: false },
+  { title: 'Feedback & Complaints Policy', meta: 'PDF - how feedback and complaints are handled', href: 'mailto:info@localliance.org?subject=Request:%20Feedback%20%26%20Complaints%20Policy', action: 'Request a copy', ready: false },
+];
+---
+
+<Layout title="Resources | LOCA" description="Reports, policies and institutional documents from LOCA.">
+  <!-- Page hero -->
+  <section class="bg-loca-dark text-white relative overflow-hidden">
+    <div class="absolute -top-24 right-1/4 w-[45vw] h-[35vh] bg-loca-primary/25 blur-[110px] rounded-full pointer-events-none"></div>
+    <div class="container mx-auto px-6 py-20 relative z-10">
+      <p class="text-loca-gold font-bold uppercase tracking-[0.18em] text-sm mb-3 reveal">Resources</p>
+      <h1 class="font-display text-4xl md:text-5xl font-bold mb-5 reveal">Reports, policies &amp; documents</h1>
+      <p class="text-xl text-gray-300 max-w-3xl leading-relaxed reveal" style="--rd:100ms">
+        Institutional documents are available here or on request. Write to
+        <a href="mailto:info@localliance.org" class="underline underline-offset-4 hover:text-white">info@localliance.org</a>
+        for our latest reports, policies and plans.
+      </p>
+    </div>
+  </section>
+
+  <section class="py-20 bg-white">
+    <div class="container mx-auto px-6 max-w-4xl space-y-4">
+      {docs.map((d, i) => (
+        <div class="reveal flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 border border-gray-200 rounded-2xl hover:shadow-md transition-shadow" style={`--rd:${i * 60}ms`}>
+          <div class="flex items-start gap-4">
+            <span class="w-11 h-11 rounded-xl bg-loca-light text-loca-primary flex items-center justify-center shrink-0">
+              <Icon name="book-open" class="w-6 h-6" />
+            </span>
+            <div>
+              <h2 class="font-bold text-loca-dark">{d.title}</h2>
+              <p class="text-sm text-gray-500">{d.meta}</p>
+            </div>
+          </div>
+          {d.ready ? (
+            <a href={d.href} class="shrink-0 bg-loca-dark text-white px-6 py-2.5 rounded-lg font-bold text-sm hover:bg-loca-primary transition-colors">
+              {d.action}
+            </a>
+          ) : (
+            <a href={d.href} class="shrink-0 border border-gray-300 text-loca-dark px-6 py-2.5 rounded-lg font-bold text-sm hover:border-loca-primary hover:text-loca-primary transition-colors">
+              {d.action}
+            </a>
+          )}
+        </div>
+      ))}
+    </div>
+  </section>
+</Layout>

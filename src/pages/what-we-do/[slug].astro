@@ -1,0 +1,84 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Icon from '../../components/Icon.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const areas = await getCollection('thematic_areas');
+  return areas.map((area) => ({ params: { slug: area.id }, props: { area } }));
+}
+
+const { area } = Astro.props;
+const others = (await getCollection('thematic_areas'))
+  .filter((a) => a.id !== area.id)
+  .sort((a, b) => a.data.order - b.data.order);
+const { Content } = await render(area);
+---
+
+<Layout title={`${area.data.title} | LOCA`} description={area.data.description}>
+  <!-- Split hero -->
+  <section class="bg-loca-dark text-white">
+    <div class="grid lg:grid-cols-2">
+      <div class="px-6 py-16 lg:py-24 lg:px-16 flex flex-col justify-center">
+        <p class="text-sm font-bold text-loca-gold uppercase tracking-[0.16em] mb-4">
+          <a href="/what-we-do" class="hover:text-white transition-colors">What We Do</a> / Program
+        </p>
+        <h1 class="font-display text-3xl md:text-5xl font-bold mb-6 leading-tight">{area.data.title}</h1>
+        <p class="text-lg text-gray-300 leading-relaxed">{area.data.description}</p>
+      </div>
+      <div class="min-h-[300px] lg:min-h-[540px]">
+        {area.data.image && <img src={area.data.image} alt={area.data.title} class="w-full h-full object-cover" width="1400" height="933" />}
+      </div>
+    </div>
+  </section>
+
+  <!-- Body -->
+  <section class="py-20 bg-white">
+    <div class="container mx-auto px-6 max-w-4xl">
+      <div class="article-body reveal">
+        <Content />
+      </div>
+
+      <!-- Side benefits -->
+      <div class="grid md:grid-cols-2 gap-6 mt-14">
+        <div class="bg-loca-light/60 rounded-2xl p-7 border border-loca-light reveal">
+          <h3 class="font-display font-bold text-loca-dark mb-2">Delivered with communities</h3>
+          <p class="text-sm text-gray-700 leading-relaxed">
+            Communities participate in assessment, design, targeting, implementation, monitoring and learning —
+            across every activity in this program.
+          </p>
+        </div>
+        <div class="bg-loca-sand rounded-2xl p-7 border border-gray-200 reveal" style="--rd:90ms">
+          <h3 class="font-display font-bold text-loca-dark mb-2">Accountable delivery</h3>
+          <p class="text-sm text-gray-700 leading-relaxed">
+            Feedback and complaints channels, safeguarding and PSEA measures apply to all activities. Learn more on
+            our <a href="/accountability" class="text-loca-primary font-semibold underline">Accountability page</a>.
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-14 reveal">
+        <a href="/contact" class="inline-flex items-center gap-2 bg-loca-dark text-white px-7 py-3.5 rounded-lg font-bold hover:bg-loca-primary transition-colors">
+          Partner with us on this program <Icon name="arrow-right" class="w-5 h-5" />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Other programs -->
+  <section class="py-20 bg-loca-sand border-t border-gray-200">
+    <div class="container mx-auto px-6">
+      <h2 class="font-display text-2xl md:text-3xl font-bold text-loca-dark mb-8 reveal">Other programs</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        {others.map((o) => (
+          <a href={`/what-we-do/${o.id}`} class="group bg-white rounded-2xl border border-gray-200 p-7 hover:border-loca-primary/40 hover:shadow-md transition-all">
+            <h3 class="font-bold text-loca-dark mb-2 group-hover:text-loca-primary transition-colors leading-snug">{o.data.shortTitle ?? o.data.title}</h3>
+            <span class="inline-flex items-center gap-2 text-loca-primary font-bold text-sm mt-2">
+              Learn more <Icon name="arrow-right" class="w-4 h-4" />
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>

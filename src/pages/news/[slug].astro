@@ -1,0 +1,61 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Icon from '../../components/Icon.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('news');
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const others = (await getCollection('news')).filter((p) => p.id !== post.id).slice(0, 2);
+---
+
+<Layout title={`${post.data.title} | LOCA News`} description={post.data.excerpt}>
+  {post.data.image && (
+    <section class="pt-4 bg-white">
+      <div class="container mx-auto px-6 max-w-5xl">
+        <div class="rounded-3xl overflow-hidden shadow-lg reveal">
+          <img src={post.data.image} alt={post.data.title} class="w-full h-[320px] md:h-[440px] object-cover" width="900" height="600" />
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="py-16 bg-white">
+    <div class="container mx-auto px-6 max-w-3xl">
+      <p class="text-xs font-bold text-loca-primary mb-3 uppercase tracking-[0.12em] reveal">
+        {post.data.tag} &middot; {post.data.date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+      </p>
+      <h1 class="font-display text-3xl md:text-4xl font-bold text-loca-dark mb-6 leading-tight reveal">{post.data.title}</h1>
+      <div class="article-body reveal">
+        <Content />
+      </div>
+      <div class="mt-12 pt-8 border-t border-gray-100 reveal">
+        <a href="/news" class="inline-flex items-center gap-2 text-loca-primary font-bold hover:gap-3 transition-all">
+          <Icon name="arrow-right" class="w-4 h-4 rotate-180" /> Back to all news
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {others.length > 0 && (
+    <section class="py-16 bg-loca-sand border-t border-gray-200">
+      <div class="container mx-auto px-6">
+        <h2 class="font-display text-2xl font-bold text-loca-dark mb-8 reveal">More stories</h2>
+        <div class="grid md:grid-cols-2 gap-6">
+          {others.map((o) => (
+            <a href={`/news/${o.id}`} class="group bg-white rounded-2xl border border-gray-200 p-6 hover:border-loca-primary/40 hover:shadow-md transition-all reveal">
+              <p class="text-xs font-bold text-loca-primary mb-2 uppercase tracking-[0.12em]">
+                {o.data.tag} &middot; {o.data.date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+              </p>
+              <h3 class="font-bold text-loca-dark group-hover:text-loca-primary transition-colors leading-snug">{o.data.title}</h3>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+</Layout>

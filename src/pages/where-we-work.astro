@@ -1,0 +1,86 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+
+const regions = ['Mogadishu & Banadir', 'South West & Jubaland', 'Galmudug & Hirshabelle', 'Puntland & Somaliland'];
+
+const localisation = [
+  { title: 'Local leadership and decision-making', text: 'Meaningful participation of communities and local institutions in identifying priorities, designing interventions and assessing results.' },
+  { title: 'Equitable, mutually beneficial partnerships', text: 'Partnerships based on mutual respect, transparency, shared objectives and recognition of local contributions.' },
+  { title: 'Fair and transparent resource allocation', text: 'Advocating for proportionate, transparent allocation of resources, including reasonable support costs for local partners.' },
+  { title: 'Institutional capacity strengthening', text: 'Investing in organizational, technical, financial and operational capacities of local civil society and community structures.' },
+  { title: 'Shared accountability and risk management', text: 'Joint responsibility for program quality, safeguarding, financial management and compliance — with fairly shared risks.' },
+  { title: 'Community ownership and participation', text: 'Affected communities as active participants in planning, implementation, monitoring and decision-making — not passive recipients.' },
+  { title: 'Recognition and visibility of local actors', text: 'Promoting recognition of the contributions, expertise and leadership of Somali civil society and community structures.' },
+  { title: 'Sustainable local capacity and systems', text: 'Strengthening existing community structures and national systems beyond the lifespan of individual projects.' },
+];
+---
+
+<Layout title="Where We Work | LOCA" description="LOCA prioritizes hard-to-reach, underserved, displacement-affected and climate-vulnerable locations across Somalia.">
+  <!-- Page hero -->
+  <section class="bg-loca-sand border-b border-gray-200 py-20">
+    <div class="container mx-auto px-6">
+      <p class="text-loca-primary font-bold uppercase tracking-[0.18em] text-sm mb-3 reveal">Where We Work</p>
+      <h1 class="font-display text-4xl md:text-5xl font-bold text-loca-dark mb-5 reveal">Present where the need is greatest</h1>
+      <p class="text-xl text-gray-600 max-w-3xl leading-relaxed reveal" style="--rd:100ms">
+        Our geographic focus is Somalia, with a deliberate priority for hard-to-reach, underserved,
+        displacement-affected and climate-vulnerable locations.
+      </p>
+    </div>
+  </section>
+
+  <!-- Map + regions -->
+  <section class="py-20 bg-white">
+    <div class="container mx-auto px-6 grid lg:grid-cols-2 gap-14 items-center">
+      <div class="reveal order-2 lg:order-1">
+        <h2 class="font-display text-3xl font-bold text-loca-dark mb-5">Guided by needs, community priorities and access</h2>
+        <p class="text-gray-600 text-lg leading-relaxed mb-8">
+          Operational presence and expansion are guided by humanitarian needs, community priorities, access and
+          security assessments, organizational capacity and coordination with relevant authorities and
+          humanitarian/development actors. We seek to complement — not duplicate — existing services.
+        </p>
+        <div class="grid sm:grid-cols-2 gap-3">
+          {regions.map((r) => (
+            <div class="flex items-center gap-3 bg-loca-light/60 px-5 py-3.5 rounded-xl border border-loca-light">
+              <Icon name="map-pin" class="w-5 h-5 text-loca-primary shrink-0" />
+              <span class="text-gray-800 font-semibold text-sm">{r}</span>
+            </div>
+          ))}
+        </div>
+        <p class="text-sm text-gray-500 mt-6">Presence continues to expand based on needs, access and partnerships.</p>
+      </div>
+      <div class="reveal order-1 lg:order-2" style="--rd:120ms">
+        <div class="bg-loca-light/50 rounded-3xl p-8 md:p-12 border border-loca-light">
+          <img src="/images/map-somalia.png" alt="Map of Somalia" class="w-full h-auto" loading="lazy" width="1200" height="1525" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Localisation -->
+  <section class="py-20 bg-loca-dark text-white relative overflow-hidden">
+    <div class="absolute -bottom-32 left-1/3 w-[45vw] h-[35vh] bg-loca-primary/25 blur-[110px] rounded-full pointer-events-none"></div>
+    <div class="container mx-auto px-6 relative z-10">
+      <div class="max-w-3xl mb-12 reveal">
+        <p class="text-loca-gold font-bold uppercase tracking-[0.18em] text-sm mb-3">Localisation</p>
+        <h2 class="font-display text-3xl md:text-4xl font-bold mb-5">Locally led action, by design</h2>
+        <p class="text-gray-300 leading-relaxed">
+          As a Somali-led organization, LOCA is committed to advancing locally led action — strengthening community
+          leadership, promoting equitable partnerships and investing in local capacities. These eight commitments
+          guide our localization approach.
+        </p>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-5">
+        {localisation.map((l, i) => (
+          <div class="reveal bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur" style={`--rd:${(i % 2) * 80}ms`}>
+            <div class="flex items-center gap-3 mb-3">
+              <span class="w-8 h-8 rounded-full bg-loca-primary/30 border border-loca-primary/40 flex items-center justify-center text-sm font-bold shrink-0">{i + 1}</span>
+              <h3 class="font-bold text-loca-light leading-snug">{l.title}</h3>
+            </div>
+            <p class="text-sm text-gray-400 leading-relaxed">{l.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>

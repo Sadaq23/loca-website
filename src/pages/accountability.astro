@@ -1,0 +1,175 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+
+const channels = [
+  {
+    icon: 'phone',
+    title: 'Dedicated phone line',
+    text: 'Call or send an SMS to our feedback line. Designated feedback focal points receive concerns directly.',
+    action: '+252 615 508 438',
+    href: 'tel:+252615508438',
+  },
+  {
+    icon: 'map-pin',
+    title: 'Community feedback desks',
+    text: 'Feedback desks and accessible complaints boxes are available in our program locations, with focal points you can approach directly.',
+    action: 'In program locations',
+  },
+  {
+    icon: 'shield-check',
+    title: 'Confidential & anonymous channels',
+    text: 'Confidential and anonymous reporting is available for sensitive concerns, including safeguarding and PSEA matters. No one needs to give their name.',
+    action: 'Ask any staff member or focal point',
+  },
+  {
+    icon: 'envelope',
+    title: 'This website',
+    text: 'Send a message through our contact form and select "Confidential Feedback / Complaint" as the subject.',
+    action: 'Open the contact form',
+    href: '/contact',
+  },
+];
+
+const framework = [
+  { title: 'Governance and organizational accountability', text: 'Clear governance arrangements, defined roles and responsibilities, effective Board oversight, transparent decision-making and appropriate management accountability mechanisms.' },
+  { title: 'Financial management and internal controls', text: 'Transparent budgeting, financial reporting, expenditure verification, segregation of duties, cash and bank controls, reconciliation, audit arrangements and prevention of fraud and corruption.' },
+  { title: 'Procurement and supply chain management', text: 'Transparent, competitive and cost-effective procurement, supplier due diligence, proper contract and asset management, inventory control and compliance with donor requirements.' },
+  { title: 'Human resources and organizational management', text: 'Transparent recruitment, fair employment practices, staff development, performance management, staff welfare and adherence to the staff code of conduct.' },
+  { title: 'Safeguarding, PSEA and protection', text: 'Zero tolerance for sexual exploitation, abuse, harassment and discrimination — with safe programming, confidential reporting channels, survivor-centered referral pathways and timely handling of concerns.' },
+  { title: 'Program quality and risk management', text: 'Program management standards, risk assessments, context analysis, conflict sensitivity, security management and continuous performance monitoring.' },
+  { title: 'Monitoring, Evaluation, Accountability and Learning (MEAL)', text: 'Results-based management, routine monitoring, data quality assurance, outcome measurement, evaluations, community feedback and evidence-informed adaptation.' },
+  { title: 'Data protection and information management', text: 'Responsible collection, storage, access, use and sharing of program and personal data, with appropriate confidentiality and information security measures.' },
+  { title: 'Partnership management and donor compliance', text: 'Transparent partnership selection, due diligence, capacity assessments, written agreements, performance monitoring and compliance with donor requirements.' },
+];
+---
+
+<Layout title="Accountability & Safeguarding | LOCA" description="How LOCA practices accountability to affected populations: feedback channels, safeguarding, PSEA and our institutional compliance framework.">
+  <!-- Page hero -->
+  <section class="bg-loca-dark text-white relative overflow-hidden">
+    <div class="absolute -top-24 right-1/4 w-[45vw] h-[35vh] bg-loca-primary/25 blur-[110px] rounded-full pointer-events-none"></div>
+    <div class="container mx-auto px-6 py-20 relative z-10">
+      <p class="text-loca-gold font-bold uppercase tracking-[0.18em] text-sm mb-3 reveal">Accountability</p>
+      <h1 class="font-display text-4xl md:text-5xl font-bold mb-5 reveal">We listen. We respond. We close the loop.</h1>
+      <p class="text-xl text-gray-300 max-w-3xl leading-relaxed reveal" style="--rd:100ms">
+        Accountability to affected populations (AAP) is a fundamental organizational commitment — communities are
+        rights-holders and active stakeholders, not passive recipients of assistance.
+      </p>
+    </div>
+  </section>
+
+  <!-- How accountability works -->
+  <section class="py-20 bg-white">
+    <div class="container mx-auto px-6 max-w-4xl">
+      <div class="article-body reveal">
+        <p class="text-lg leading-relaxed">
+          We integrate accountability throughout the program cycle — from needs assessments and community
+          consultations to design, participant selection, implementation, monitoring, evaluation and learning.
+          Communities receive clear, timely information about program objectives, eligibility criteria,
+          entitlements and expected results, in formats that take account of language, literacy, gender,
+          disability and accessibility.
+        </p>
+        <p>
+          Feedback received from communities informs program adjustments, operational improvements and
+          organizational learning — and we communicate back to communities on the actions taken in response.
+          All feedback and complaints are handled with confidentiality, impartiality and protection against
+          retaliation.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feedback channels -->
+  <section id="feedback" class="py-20 bg-loca-sand border-y border-gray-200">
+    <div class="container mx-auto px-6">
+      <div class="max-w-2xl mb-12 reveal">
+        <p class="text-loca-primary font-bold uppercase tracking-[0.18em] text-sm mb-3">Feedback &amp; Complaints</p>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-loca-dark mb-4">How to reach us</h2>
+        <p class="text-gray-600 text-lg">
+          Anyone can raise a question, suggestion or complaint — about our programs or our conduct — through any
+          of these channels, without fear of retaliation.
+        </p>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-6">
+        {channels.map((c, i) => (
+          <div class="reveal bg-white rounded-2xl border border-gray-200 p-7 hover:shadow-md transition-shadow" style={`--rd:${(i % 2) * 80}ms`}>
+            <div class="w-11 h-11 rounded-xl bg-loca-light text-loca-primary flex items-center justify-center mb-4">
+              <Icon name={c.icon} class="w-6 h-6" />
+            </div>
+            <h3 class="font-bold text-loca-dark mb-2">{c.title}</h3>
+            <p class="text-sm text-gray-600 leading-relaxed mb-4">{c.text}</p>
+            {c.href ? (
+              <a href={c.href} class="inline-flex items-center gap-2 text-loca-primary font-bold text-sm hover:gap-3 transition-all">
+                {c.action} <Icon name="arrow-right" class="w-4 h-4" />
+              </a>
+            ) : (
+              <p class="text-sm font-semibold text-loca-dark">{c.action}</p>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- PSEA -->
+  <section id="psea" class="py-20 bg-white">
+    <div class="container mx-auto px-6 max-w-4xl">
+      <div class="bg-loca-dark text-white rounded-3xl p-8 md:p-12 relative overflow-hidden reveal">
+        <div class="absolute -top-20 -right-16 w-[30vw] h-[25vh] bg-loca-primary/30 blur-[90px] rounded-full pointer-events-none"></div>
+        <div class="relative z-10">
+          <div class="flex items-center gap-4 mb-5">
+            <div class="w-12 h-12 rounded-xl bg-loca-primary/30 border border-loca-primary/40 flex items-center justify-center">
+              <Icon name="shield-check" class="w-7 h-7 text-loca-light" />
+            </div>
+            <h2 class="font-display text-2xl md:text-3xl font-bold">Safeguarding &amp; PSEA</h2>
+          </div>
+          <p class="text-gray-300 leading-relaxed mb-4">
+            LOCA upholds zero tolerance for sexual exploitation, abuse, harassment, discrimination and other forms
+            of misconduct. We maintain prevention, reporting, referral and response measures, including safe,
+            survivor-centered referral pathways.
+          </p>
+          <p class="text-gray-300 leading-relaxed mb-8">
+            Concerns involving safeguarding, PSEA, harassment, fraud or corruption are managed through
+            confidential reporting and response procedures, with protection against retaliation.
+          </p>
+          <a href="/contact" class="inline-block bg-loca-primary hover:bg-loca-bright text-white px-7 py-3.5 rounded-lg font-bold transition-colors">
+            Report a Concern
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Compliance framework accordions -->
+  <section class="py-20 bg-loca-sand border-t border-gray-200">
+    <div class="container mx-auto px-6 max-w-4xl">
+      <div class="mb-10 reveal">
+        <p class="text-loca-primary font-bold uppercase tracking-[0.18em] text-sm mb-3">Our Systems</p>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-loca-dark mb-4">Institutional capacity &amp; compliance framework</h2>
+        <p class="text-gray-600 text-lg">
+          Nine core areas guide our policies, procedures and internal controls — so resources are managed
+          responsibly and programs are delivered effectively.
+        </p>
+      </div>
+      <div class="space-y-3">
+        {framework.map((f, i) => (
+          <details class="acc reveal bg-white rounded-2xl border border-gray-200 group" style={`--rd:${(i % 3) * 60}ms`}>
+            <summary class="flex items-center justify-between gap-4 p-6 font-bold text-loca-dark">
+              <span class="flex items-center gap-3">
+                <span class="font-display text-loca-primary/40">0{i + 1}</span>
+                {f.title}
+              </span>
+              <Icon name="chevron-down" class="acc-chevron w-5 h-5 text-gray-400 shrink-0" />
+            </summary>
+            <p class="px-6 pb-6 pt-0 text-sm text-gray-600 leading-relaxed pl-[68px]">{f.text}</p>
+          </details>
+        ))}
+      </div>
+      <p class="text-sm text-gray-500 mt-8 reveal">
+        We progressively strengthen our systems through organizational assessments, policy development, staff
+        capacity building, internal reviews and independent audits — maintaining the confidence of communities,
+        government institutions, donors and partners.
+      </p>
+    </div>
+  </section>
+</Layout>

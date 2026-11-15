@@ -1,0 +1,382 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+import { getCollection } from 'astro:content';
+
+const areas = (await getCollection('thematic_areas')).sort((a, b) => a.data.order - b.data.order);
+const posts = (await getCollection('news'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+// NOTE: confirm these figures against your program monitoring data before launch.
+const stats = [
+  { value: 150, suffix: 'k+', label: 'People Reached' },
+  { value: 45, suffix: '', label: 'Projects Active' },
+  { value: 12, suffix: '', label: 'Regions Covered' },
+  { value: 100, suffix: '%', label: 'Locally Led' },
+];
+
+const how = [
+  { title: 'Community-led', text: 'Engage communities in needs assessment, design, targeting, implementation, monitoring and learning.' },
+  { title: 'Evidence-informed', text: 'Use context analysis, disaggregated data, participatory assessments and monitoring to guide decisions.' },
+  { title: 'Integrated approach', text: 'Connect emergency assistance with recovery, resilience, service strengthening and longer-term development.' },
+  { title: 'Partnership-based delivery', text: 'Work with government institutions, community organizations and humanitarian partners, with clear roles and mutual accountability.' },
+  { title: 'Quality & value for money', text: 'Apply sound project management, technical standards, proportionate controls and responsible resource use.' },
+  { title: 'Adaptive management', text: 'Review progress and risks regularly and adjust approaches when evidence or context changes.' },
+];
+
+const commitments = [
+  'Human dignity',
+  'Impartiality and need',
+  'Inclusion and equity',
+  'Accountability and transparency',
+  'Integrity',
+  'Community leadership',
+  'Partnership and solidarity',
+  'Learning and adaptability',
+  'Environmental responsibility',
+];
+
+const regions = ['Mogadishu & Banadir', 'South West & Jubaland', 'Galmudug & Hirshabelle', 'Puntland & Somaliland'];
+---
+
+<Layout>
+  <!-- ============ HERO ============ -->
+  <section class="relative min-h-[88vh] flex items-center overflow-hidden bg-loca-dark">
+    <img
+      src="/images/hero-home.jpg"
+      alt="A vibrant market day in Somalia"
+      class="absolute inset-0 w-full h-full object-cover hero-zoom"
+      width="1920"
+      height="1150"
+      fetchpriority="high"
+    />
+    <div class="absolute inset-0 bg-gradient-to-r from-loca-dark/95 via-loca-dark/70 to-loca-dark/25"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-loca-dark via-transparent to-transparent"></div>
+
+    <div class="relative z-10 container mx-auto px-6 py-24">
+      <div class="max-w-3xl reveal">
+        <p class="inline-block bg-white/10 backdrop-blur border border-white/20 text-loca-light text-xs font-bold uppercase tracking-[0.18em] px-4 py-2 rounded-full mb-7">
+          Local Somali civil society organization
+        </p>
+        <h1 class="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.08] tracking-tight mb-7">
+          Locally led action.<br />
+          <span class="text-loca-light">Dignity-centered response.</span>
+        </h1>
+        <p class="text-lg md:text-xl text-gray-200/90 leading-relaxed max-w-2xl mb-10">
+          LOCA works alongside crisis-affected and underserved communities across Somalia — delivering
+          principled humanitarian assistance, restoring essential services and advancing locally led solutions.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="/what-we-do" class="bg-loca-primary hover:bg-loca-bright text-white px-8 py-4 rounded-lg font-bold text-center transition-colors shadow-lg shadow-black/20">
+            Explore Our Programs
+          </a>
+          <a href="/contact" class="bg-white/10 border-2 border-white/40 hover:bg-white/20 text-white px-8 py-4 rounded-lg font-bold text-center transition-colors backdrop-blur">
+            Partner With Us
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STATS CARD (overlapping hero) ============ -->
+  <section class="relative z-20 -mt-14 px-4 md:px-8">
+    <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-[0_24px_60px_rgba(10,59,30,0.12)] border border-gray-100 py-10 px-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        {stats.map((s, i) => (
+          <div class="reveal" style={`--rd:${i * 80}ms`}>
+            <div class="font-display text-4xl md:text-5xl font-bold text-loca-dark mb-1" data-count={s.value} data-suffix={s.suffix}>
+              0{s.suffix}
+            </div>
+            <p class="text-loca-primary font-semibold text-xs uppercase tracking-[0.14em]">{s.label}</p>
+          </div>
+        ))}
+      </div>
+      <p class="text-center text-sm text-gray-400 mt-8">Program reach across Somalia &mdash; updated annually in our public reporting.</p>
+    </div>
+  </section>
+
+  <!-- ============ WHAT WE DO ============ -->
+  <section class="py-24 bg-white">
+    <div class="container mx-auto px-6">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 reveal">
+        <div class="max-w-2xl">
+          <p class="text-loca-primary font-bold uppercase tracking-[0.18em] text-sm mb-3">What We Do</p>
+          <h2 class="font-display text-3xl md:text-4xl font-bold text-loca-dark mb-4">Four integrated thematic areas</h2>
+          <p class="text-gray-600 text-lg">
+            We respond to urgent needs while addressing the underlying drivers of vulnerability — supporting
+            durable, community-led change.
+          </p>
+        </div>
+        <a href="/what-we-do" class="shrink-0 inline-flex items-center gap-2 text-loca-primary font-bold hover:gap-3 transition-all">
+          All programs <Icon name="arrow-right" class="w-5 h-5" />
+        </a>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8">
+        {areas.map((area, i) => (
+          <a
+            href={`/what-we-do/${area.id}`}
+            class="group reveal bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 hover:border-loca-primary/40 transition-all duration-300"
+            style={`--rd:${(i % 2) * 90}ms`}
+          >
+            {area.data.image && (
+              <div class="h-56 overflow-hidden">
+                <img
+                  src={area.data.image}
+                  alt={area.data.title}
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  loading="lazy"
+                  width="1400"
+                  height="933"
+                />
+              </div>
+            )}
+            <div class="p-8">
+              <h3 class="font-display text-xl font-bold text-loca-dark mb-3 group-hover:text-loca-primary transition-colors">
+                {area.data.title}
+              </h3>
+              <p class="text-gray-600 text-sm leading-relaxed mb-5">{area.data.description}</p>
+              <span class="inline-flex items-center gap-2 text-loca-primary font-bold text-sm">
+                Explore program <Icon name="arrow-right" class="w-4 h-4" />
+              </span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW WE WORK ============ -->
+  <section class="py-24 bg-loca-sand">
+    <div class="container mx-auto px-6">
+      <div class="max-w-2xl mb-12 reveal">
+        <p class="text-loca-primary font-bold uppercase tracking-[0.18em] text-sm mb-3">How We Work</p>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-loca-dark mb-4">Grounded in community leadership and evidence</h2>
+        <p class="text-gray-600 text-lg">Six commitments guide every program, from first assessment to final evaluation.</p>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {how.map((item, i) => (
+          <div class="reveal bg-white rounded-2xl p-7 border border-gray-100 hover:shadow-md transition-shadow" style={`--rd:${(i % 3) * 90}ms`}>
+            <div class="font-display text-3xl font-bold text-loca-primary/25 mb-3">0{i + 1}</div>
+            <h3 class="font-bold text-loca-dark mb-2">{item.title}</h3>
+            <p class="text-sm text-gray-600 leading-relaxed">{item.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHO WE ARE TEASER ============ -->
+  <section class="py-24 bg-white overflow-hidden">
+    <div class="container mx-auto px-6 grid lg:grid-cols-2 gap-14 items-center">
+      <div class="reveal order-2 lg:order-1">
+        <p class="text-loca-primary font-bold uppercase tracking-[0.18em] text-sm mb-3">Who We Are</p>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-loca-dark mb-5">
+          A Somali organization, built around the communities it serves
+        </h2>
+        <p class="text-gray-600 text-lg leading-relaxed mb-4">
+          Local Community Action Alliance (LOCA) works with crisis-affected and underserved communities —
+          particularly people living in hard-to-reach, fragile and displacement-affected areas of Somalia.
+        </p>
+        <p class="text-gray-600 leading-relaxed mb-8">
+          We place affected communities at the center of assessment, planning, implementation and
+          accountability — combining timely, principled humanitarian assistance with longer-term approaches
+          that build resilience and expand opportunity.
+        </p>
+        <a href="/about" class="inline-block bg-loca-dark text-white px-7 py-3.5 rounded-lg font-bold hover:bg-loca-primary transition-colors">
+          More about LOCA
+        </a>
+      </div>
+      <div class="reveal order-1 lg:order-2 relative" style="--rd:120ms">
+        <div class="rounded-3xl overflow-hidden shadow-2xl">
+          <img
+            src="/images/about-community.jpg"
+            alt="A smiling Somali woman at a local market"
+            class="w-full h-full object-cover"
+            loading="lazy"
+            width="1280"
+            height="960"
+          />
+        </div>
+        <div class="absolute -bottom-6 -left-4 md:-left-8 bg-loca-dark text-white rounded-2xl px-7 py-5 shadow-xl">
+          <p class="font-display text-2xl font-bold">100% Somali-led</p>
+          <p class="text-xs text-gray-300 uppercase tracking-[0.14em]">Community &middot; Dignity &middot; Resilience</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ OUR COMMITMENTS ============ -->
+  <section class="py-20 bg-loca-dark relative overflow-hidden">
+    <div class="absolute -bottom-32 left-1/4 w-[50vw] h-[40vh] bg-loca-primary/25 blur-[110px] rounded-full pointer-events-none"></div>
+    <div class="container mx-auto px-6 relative z-10">
+      <div class="text-center max-w-2xl mx-auto mb-12 reveal">
+        <p class="text-loca-gold font-bold uppercase tracking-[0.18em] text-sm mb-3">Our Commitments</p>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-white">The principles behind every program</h2>
+      </div>
+      <div class="flex flex-wrap justify-center gap-3">
+        {commitments.map((c, i) => (
+          <span
+            class="reveal inline-flex items-center gap-2 bg-white/5 border border-white/15 text-loca-light text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-white/10 transition-colors"
+            style={`--rd:${(i % 5) * 70}ms`}
+          >
+            <Icon name="check" class="w-4 h-4 text-loca-gold" />
+            {c}
+          </span>
+        ))}
+      </div>
+      <div class="text-center mt-10 reveal">
+        <a href="/about#values" class="inline-flex items-center gap-2 text-loca-light font-semibold hover:text-white transition-colors">
+          Read how we apply them <Icon name="arrow-right" class="w-4 h-4" />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHERE WE WORK TEASER ============ -->
+  <section class="py-24 bg-white">
+    <div class="container mx-auto px-6 grid lg:grid-cols-2 gap-14 items-center">
+      <div class="reveal">
+        <p class="text-loca-primary font-bold uppercase tracking-[0.18em] text-sm mb-3">Where We Work</p>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-loca-dark mb-5">Prioritizing hard-to-reach, underserved communities</h2>
+        <p class="text-gray-600 text-lg leading-relaxed mb-8">
+          Our geographic focus is Somalia, with a deliberate priority for hard-to-reach, displacement-affected
+          and climate-vulnerable locations — guided by humanitarian needs, community priorities and coordination
+          with local actors.
+        </p>
+        <div class="grid sm:grid-cols-2 gap-3 mb-9">
+          {regions.map((r) => (
+            <div class="flex items-center gap-3 bg-loca-light/60 px-5 py-3.5 rounded-xl">
+              <span class="w-2.5 h-2.5 rounded-full bg-loca-primary shrink-0"></span>
+              <span class="text-gray-800 font-semibold text-sm">{r}</span>
+            </div>
+          ))}
+        </div>
+        <a href="/where-we-work" class="inline-flex items-center gap-2 text-loca-primary font-bold hover:gap-3 transition-all">
+          Our geographic approach <Icon name="arrow-right" class="w-5 h-5" />
+        </a>
+      </div>
+      <div class="reveal" style="--rd:120ms">
+        <div class="bg-loca-light/50 rounded-3xl p-8 md:p-12 border border-loca-light">
+          <img src="/images/map-somalia.png" alt="Map of Somalia" class="w-full h-auto" loading="lazy" width="1200" height="1525" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LATEST NEWS ============ -->
+  <section class="py-24 bg-loca-sand">
+    <div class="container mx-auto px-6">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 reveal">
+        <div class="max-w-2xl">
+          <p class="text-loca-primary font-bold uppercase tracking-[0.18em] text-sm mb-3">News &amp; Stories</p>
+          <h2 class="font-display text-3xl md:text-4xl font-bold text-loca-dark mb-4">Latest updates from the field</h2>
+        </div>
+        <a href="/news" class="shrink-0 inline-flex items-center gap-2 text-loca-primary font-bold hover:gap-3 transition-all">
+          All news <Icon name="arrow-right" class="w-5 h-5" />
+        </a>
+      </div>
+
+      {posts.length > 0 ? (
+        <div class="grid md:grid-cols-3 gap-8">
+          {posts.map((post, i) => (
+            <a
+              href={`/news/${post.id}`}
+              class="group reveal bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-gray-100"
+              style={`--rd:${i * 90}ms`}
+            >
+              {post.data.image && (
+                <div class="h-48 overflow-hidden">
+                  <img
+                    src={post.data.image}
+                    alt={post.data.title}
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    loading="lazy"
+                    width="900"
+                    height="600"
+                  />
+                </div>
+              )}
+              <div class="p-6">
+                <p class="text-xs font-bold text-loca-primary mb-2 uppercase tracking-[0.12em]">
+                  {post.data.tag} &middot; {post.data.date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </p>
+                <h3 class="font-display font-bold text-lg text-loca-dark mb-2 leading-snug group-hover:text-loca-primary transition-colors">
+                  {post.data.title}
+                </h3>
+                <p class="text-gray-600 text-sm line-clamp-2">{post.data.excerpt}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div class="bg-white rounded-2xl border border-gray-100 p-10 text-center text-gray-500">
+          <p>News and stories will appear here soon.</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- ============ CTA BAND ============ -->
+  <section class="py-20 bg-white">
+    <div class="container mx-auto px-6">
+      <div class="relative overflow-hidden rounded-3xl bg-loca-dark px-8 py-16 md:py-20 md:px-16 text-center reveal">
+        <div class="absolute -top-24 -right-16 w-[40vw] h-[30vh] bg-loca-primary/30 blur-[100px] rounded-full pointer-events-none"></div>
+        <div class="absolute -bottom-24 -left-16 w-[30vw] h-[30vh] bg-loca-light/10 blur-[90px] rounded-full pointer-events-none"></div>
+        <div class="relative z-10">
+          <h2 class="font-display text-3xl md:text-4xl font-bold text-white mb-4">Partner with LOCA</h2>
+          <p class="text-gray-300 max-w-2xl mx-auto mb-9 leading-relaxed">
+            We welcome collaboration with UN agencies, international NGOs, donors, government institutions and
+            civil society — grounded in shared objectives, complementary expertise and equitable partnership.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/contact" class="bg-loca-primary hover:bg-loca-bright text-white px-8 py-4 rounded-lg font-bold transition-colors">
+              Start a Conversation
+            </a>
+            <a href="/what-we-do" class="border-2 border-white/30 hover:bg-white/10 text-white px-8 py-4 rounded-lg font-bold transition-colors">
+              See Our Programs
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script is:inline>
+  (function () {
+    // Animated stat counters
+    var counters = document.querySelectorAll('[data-count]');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function setFinal(el) {
+      el.textContent = parseInt(el.getAttribute('data-count'), 10) + (el.getAttribute('data-suffix') || '');
+    }
+    if (!('IntersectionObserver' in window) || reduce) {
+      counters.forEach(setFinal);
+      return;
+    }
+    var io = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          var el = entry.target;
+          io.unobserve(el);
+          var target = parseInt(el.getAttribute('data-count'), 10);
+          var suffix = el.getAttribute('data-suffix') || '';
+          var dur = 1600;
+          var t0 = performance.now();
+          var tick = function (now) {
+            var p = Math.min((now - t0) / dur, 1);
+            var eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = Math.round(target * eased) + suffix;
+            if (p < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        });
+      },
+      { threshold: 0.4 }
+    );
+    counters.forEach(function (el) { io.observe(el); });
+  })();
+</script>
