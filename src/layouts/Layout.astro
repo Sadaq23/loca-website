@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Icon from '../components/Icon.astro';
+import siteSettings from '../data/site-settings.json';
 
 interface Props { title?: string; description?: string }
 const {
@@ -26,8 +27,8 @@ const jsonLd = {
   url: 'https://www.localliance.org',
   logo: 'https://www.localliance.org/images/logo.jpeg',
   description,
-  email: 'info@localliance.org',
-  telephone: '+252615508438',
+  email: siteSettings.email,
+  telephone: siteSettings.phone,
   address: { '@type': 'PostalAddress', addressLocality: 'Mogadishu', addressCountry: 'SO' },
 };
 ---
@@ -175,8 +176,8 @@ const jsonLd = {
           <h4 class="font-bold mb-4 text-sm uppercase tracking-[0.14em] text-loca-light">Contact</h4>
           <ul class="text-sm text-gray-400 space-y-3">
             <li>Mogadishu, Somalia</li>
-            <li><a href="mailto:info@localliance.org" class="hover:text-white transition-colors">info@localliance.org</a></li>
-            <li><a href="tel:+252615508438" class="hover:text-white transition-colors">+252 615 508 438</a></li>
+            <li><a href={`mailto:${siteSettings.email}`} class="hover:text-white transition-colors">{siteSettings.email}</a></li>
+            <li><a href={`tel:${siteSettings.phone}`} class="hover:text-white transition-colors">{siteSettings.phoneDisplay}</a></li>
           </ul>
         </div>
       </div>

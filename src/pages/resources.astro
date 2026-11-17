@@ -1,14 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Icon from '../components/Icon.astro';
+import documentsData from '../data/documents.json';
 
-const docs = [
-  { title: 'LOCA Organisational Profile', meta: 'PDF - institutional overview, mandate and systems', href: '/documents/LOCA-Organisational-Profile.pdf', action: 'Download PDF', ready: true },
-  { title: 'Annual Report', meta: 'PDF - program results and financial summary', href: 'mailto:info@localliance.org?subject=Request:%20Annual%20Report', action: 'Request a copy', ready: false },
-  { title: 'PSEA & Safeguarding Policy', meta: 'PDF - prevention of sexual exploitation and abuse', href: 'mailto:info@localliance.org?subject=Request:%20PSEA%20%26%20Safeguarding%20Policy', action: 'Request a copy', ready: false },
-  { title: 'Child Safeguarding Policy', meta: 'PDF - child-safe programming standards', href: 'mailto:info@localliance.org?subject=Request:%20Child%20Safeguarding%20Policy', action: 'Request a copy', ready: false },
-  { title: 'Feedback & Complaints Policy', meta: 'PDF - how feedback and complaints are handled', href: 'mailto:info@localliance.org?subject=Request:%20Feedback%20%26%20Complaints%20Policy', action: 'Request a copy', ready: false },
-];
+const docs = documentsData.documents;
 ---
 
 <Layout title="Resources | LOCA" description="Reports, policies and institutional documents from LOCA.">
@@ -39,13 +34,13 @@ const docs = [
               <p class="text-sm text-gray-500">{d.meta}</p>
             </div>
           </div>
-          {d.ready ? (
-            <a href={d.href} class="shrink-0 bg-loca-dark text-white px-6 py-2.5 rounded-lg font-bold text-sm hover:bg-loca-primary transition-colors">
-              {d.action}
+          {d.file ? (
+            <a href={d.file} class="shrink-0 bg-loca-dark text-white px-6 py-2.5 rounded-lg font-bold text-sm hover:bg-loca-primary transition-colors">
+              Download PDF
             </a>
           ) : (
-            <a href={d.href} class="shrink-0 border border-gray-300 text-loca-dark px-6 py-2.5 rounded-lg font-bold text-sm hover:border-loca-primary hover:text-loca-primary transition-colors">
-              {d.action}
+            <a href={`mailto:info@localliance.org?subject=Request: ${d.title}`} class="shrink-0 border border-gray-300 text-loca-dark px-6 py-2.5 rounded-lg font-bold text-sm hover:border-loca-primary hover:text-loca-primary transition-colors">
+              Request a copy
             </a>
           )}
         </div>

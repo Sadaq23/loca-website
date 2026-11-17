@@ -1,0 +1,12 @@
+{
+  "email": "info@localliance.org",
+  "phone": "+252615508438",
+  "phoneDisplay": "+252 615 508 438",
+  "address": "Mogadishu, Somalia",
+  "stats": [
+    { "value": 150, "suffix": "k+", "label": "People Reached" },
+    { "value": 45, "suffix": "", "label": "Projects Active" },
+    { "value": 12, "suffix": "", "label": "Regions Covered" },
+    { "value": 100, "suffix": "%", "label": "Locally Led" }
+  ]
+}

@@ -2,19 +2,15 @@
 import Layout from '../layouts/Layout.astro';
 import Icon from '../components/Icon.astro';
 import { getCollection } from 'astro:content';
+import siteSettings from '../data/site-settings.json';
 
 const areas = (await getCollection('thematic_areas')).sort((a, b) => a.data.order - b.data.order);
 const posts = (await getCollection('news'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
 
-// NOTE: confirm these figures against your program monitoring data before launch.
-const stats = [
-  { value: 150, suffix: 'k+', label: 'People Reached' },
-  { value: 45, suffix: '', label: 'Projects Active' },
-  { value: 12, suffix: '', label: 'Regions Covered' },
-  { value: 100, suffix: '%', label: 'Locally Led' },
-];
+// Editable in the admin panel: /admin -> Site Settings -> Homepage statistics
+const stats = siteSettings.stats;
 
 const how = [
   { title: 'Community-led', text: 'Engage communities in needs assessment, design, targeting, implementation, monitoring and learning.' },

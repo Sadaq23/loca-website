@@ -1,0 +1,671 @@
+---
+// LOCA private control panel (client dashboard).
+// Looks and works like the WordPress admin the client knows:
+// dark admin bar, left sidebar menu (Dashboard / Inbox / Email /
+// Website / Settings), welcome dashboard with at-a-glance cards.
+// The "Edit content" items open /admin (the Decap CMS editor).
+// Static page: all data comes from the /api/panel/* Functions and
+// requires the signed session cookie. Excluded from the sitemap and
+// from robots.txt by phase-7-inbox.sh.
+import '../styles/global.css';
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#0A3B1E" />
+    <title>LOCA Control Panel</title>
+    <link rel="icon" type="image/png" href="/images/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
+    />
+    <style is:inline>
+      /* sidebar menu items - WordPress style: flat rows, active row highlighted */
+      .nav-item { display: flex; align-items: center; gap: 0.55rem; padding: 0.6rem 0.9rem; font-size: 0.85rem; font-weight: 600; color: rgba(232, 245, 233, 0.85); white-space: nowrap; border-bottom: 3px solid transparent; flex-shrink: 0; text-decoration: none; }
+      .nav-item:hover { color: #ffffff; background: rgba(255, 255, 255, 0.08); }
+      .nav-item.active { color: #ffffff; background: #2E7D32; border-bottom-color: #A5D6A7; }
+      @media (min-width: 768px) {
+        .nav-item { border-bottom: none; border-left: 3px solid transparent; padding: 0.7rem 1rem; }
+        .nav-item.active { border-left-color: #A5D6A7; }
+      }
+      .nav-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 1.3rem; height: 1.3rem; padding: 0 0.3rem; border-radius: 9999px; background: #d63638; color: #ffffff; font-size: 11px; font-weight: 700; }
+      .chip { padding: 0.45rem 0.9rem; font-size: 0.8rem; font-weight: 600; border-radius: 9999px; border: 1px solid #d1d5db; background: #ffffff; color: #374151; cursor: pointer; }
+      .chip.active { border-color: #2E7D32; color: #2E7D32; background: #E8F5E9; }
+      .msg-btn { display: inline-flex; align-items: center; padding: 0.4rem 0.9rem; font-size: 0.8rem; font-weight: 600; border-radius: 0.75rem; border: 1px solid #d1d5db; background: #ffffff; color: #374151; cursor: pointer; text-decoration: none; }
+      .msg-btn:hover { border-color: #2E7D32; color: #2E7D32; }
+      .msg-btn-primary { background: #0A3B1E; color: #ffffff; border-color: #0A3B1E; }
+      .msg-btn-primary:hover { background: #2E7D32; color: #ffffff; border-color: #2E7D32; }
+      .msg-btn-danger { color: #b91c1c; border-color: #fecaca; }
+      .msg-btn-danger:hover { border-color: #b91c1c; color: #b91c1c; }
+      .btn-big { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.7rem 1.3rem; font-size: 0.9rem; font-weight: 700; border-radius: 0.75rem; background: #0A3B1E; color: #ffffff; text-decoration: none; }
+      .btn-big:hover { background: #2E7D32; }
+      .btn-big-outline { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.7rem 1.3rem; font-size: 0.9rem; font-weight: 700; border-radius: 0.75rem; border: 1px solid #0A3B1E; color: #0A3B1E; background: #ffffff; text-decoration: none; }
+      .btn-big-outline:hover { background: #E8F5E9; }
+    </style>
+  </head>
+  <body class="bg-[#f0f0f1] text-gray-800 min-h-screen font-sans">
+    <!-- boot screen -->
+    <div id="view-boot" class="min-h-screen flex flex-col items-center justify-center gap-4">
+      <img src="/images/favicon.png" alt="LOCA" class="h-14 w-14 rounded-full" />
+      <p class="text-sm text-gray-500 font-medium">Loading the LOCA panel...</p>
+    </div>
+
+    <!-- login (like the WordPress login screen: centered card) -->
+    <section id="view-login" class="hidden min-h-screen items-center justify-center p-4">
+      <div class="w-full max-w-md bg-white rounded-2xl border border-gray-200 shadow-sm p-8 md:p-10">
+        <div class="flex flex-col items-center text-center">
+          <img src="/images/favicon.png" alt="LOCA logo" class="h-14 w-14 rounded-full mb-4" />
+          <h1 class="font-display text-2xl font-bold text-loca-dark">LOCA Control Panel</h1>
+          <p class="text-sm text-gray-500 mt-1">Private area for the LOCA team</p>
+        </div>
+        <form id="login-form" class="mt-8 space-y-4" novalidate>
+          <div>
+            <label for="login-password" class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+            <input
+              id="login-password"
+              type="password"
+              autocomplete="current-password"
+              required
+              class="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-gray-900 focus:outline-none focus:border-loca-primary transition-colors"
+              placeholder="Your panel password"
+            />
+          </div>
+          <label class="flex items-center gap-2 text-sm text-gray-600">
+            <input id="login-stay" type="checkbox" checked class="h-4 w-4 accent-loca-primary" />
+            Stay signed in for 30 days
+          </label>
+          <button
+            id="login-btn"
+            type="submit"
+            class="w-full bg-loca-dark text-white font-bold py-3.5 rounded-xl hover:bg-loca-primary transition-colors disabled:opacity-60"
+          >
+            Sign in
+          </button>
+          <div id="login-status" class="hidden text-sm rounded-xl p-3 border" aria-live="polite"></div>
+        </form>
+        <p class="text-xs text-gray-400 mt-6 text-center">info@localliance.org &middot; Local Community Action Alliance</p>
+      </div>
+    </section>
+
+    <!-- app: dark admin bar on top, sidebar menu on the left (like WordPress) -->
+    <div id="view-app" class="hidden min-h-screen flex-col">
+      <header class="bg-loca-dark text-white sticky top-0 z-40">
+        <div class="h-12 px-3 md:px-5 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5">
+            <img src="/images/favicon.png" alt="" class="h-7 w-7 rounded-full bg-white/10 p-0.5" />
+            <div class="leading-tight">
+              <p class="font-display font-bold text-sm">LOCA Control Panel</p>
+              <p class="text-[10px] text-loca-light/70 hidden sm:block">localliance.org</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 md:gap-4 text-sm">
+            <a href="/" target="_blank" rel="noopener" class="text-loca-light/90 hover:text-white hover:underline underline-offset-4">Visit Site</a>
+            <button id="logout-btn" class="text-loca-light/90 hover:text-white hover:underline underline-offset-4">Sign Out</button>
+          </div>
+        </div>
+      </header>
+
+      <div class="md:flex">
+        <!-- sidebar: horizontal strip on phones, left menu on desktop -->
+        <aside class="bg-loca-dark w-full md:w-48 shrink-0 md:min-h-[calc(100vh-3rem)]">
+          <nav id="side-nav" aria-label="Panel sections" class="flex md:flex-col overflow-x-auto md:overflow-x-visible md:sticky md:top-12">
+            <button data-tab="dashboard" class="nav-item active">
+              <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 10v10h5v-6h4v6h5V10"></path></svg>
+              <span>Dashboard</span>
+            </button>
+            <button data-tab="inbox" class="nav-item">
+              <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-6l-2 3h-4l-2-3H2"></path><path d="M5 5h14l3 7v7H2v-7z"></path></svg>
+              <span>Inbox</span>
+              <span id="unread-badge" class="hidden nav-badge">0</span>
+            </button>
+            <button data-tab="email" class="nav-item">
+              <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m2 7 10 6 10-6"></path></svg>
+              <span>Email</span>
+            </button>
+            <a href="/admin" class="nav-item">
+              <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
+              <span>Edit Content</span>
+            </a>
+            <button data-tab="website" class="nav-item">
+              <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"></path></svg>
+              <span>Website</span>
+            </button>
+            <button data-tab="settings" class="nav-item">
+              <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"></line><circle cx="9" cy="7" r="2.2"></circle><line x1="4" y1="17" x2="20" y2="17"></line><circle cx="15" cy="17" r="2.2"></circle></svg>
+              <span>Settings</span>
+            </button>
+          </nav>
+        </aside>
+
+        <main class="flex-1 min-w-0 px-4 py-6 md:px-8 md:py-8">
+          <div class="max-w-4xl space-y-6">
+            <!-- ================= DASHBOARD ================= -->
+            <section id="tab-dashboard" class="space-y-6">
+              <div class="bg-white border border-gray-200 rounded-xl p-6 md:p-8">
+                <h1 class="font-display text-2xl md:text-3xl font-bold text-loca-dark">Welcome to your LOCA panel!</h1>
+                <p class="mt-2 text-gray-600 leading-relaxed">
+                  This is the admin area of your website - it works like the WordPress dashboard you are used to.
+                  Read messages from the website, and edit the content of the site yourself.
+                </p>
+                <div class="mt-5 flex flex-wrap gap-3">
+                  <a href="/admin" class="btn-big">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
+                    Edit website content
+                  </a>
+                  <a href="/" target="_blank" rel="noopener" class="btn-big-outline">View the website</a>
+                  <button type="button" data-tab-goto="inbox" class="btn-big-outline">Read messages</button>
+                </div>
+              </div>
+
+              <h2 class="font-display text-lg font-bold text-loca-dark px-1">At a Glance</h2>
+              <div class="grid gap-4 md:grid-cols-3">
+                <button type="button" data-tab-goto="inbox" class="text-left bg-white border border-gray-200 rounded-xl p-5 hover:border-loca-primary transition-colors">
+                  <p class="text-3xl font-bold text-loca-dark"><span id="glance-unread">-</span> <span class="text-base font-semibold text-gray-500">unread messages</span></p>
+                  <p class="mt-1 text-sm text-gray-500"><span id="glance-total">-</span> messages in total</p>
+                  <p class="mt-3 text-sm font-semibold text-loca-primary">Open the Inbox &rarr;</p>
+                </button>
+                <a href="/admin" class="block bg-white border border-gray-200 rounded-xl p-5 hover:border-loca-primary transition-colors">
+                  <p class="text-lg font-bold text-loca-dark">News &amp; Stories</p>
+                  <p class="mt-1 text-sm text-gray-500">Write, edit and publish news posts with photos.</p>
+                  <p class="mt-3 text-sm font-semibold text-loca-primary">Open the editor &rarr;</p>
+                </a>
+                <a href="/admin" class="block bg-white border border-gray-200 rounded-xl p-5 hover:border-loca-primary transition-colors">
+                  <p class="text-lg font-bold text-loca-dark">Documents &amp; PDFs</p>
+                  <p class="mt-1 text-sm text-gray-500">Upload reports and policies to the Resources page.</p>
+                  <p class="mt-3 text-sm font-semibold text-loca-primary">Open the editor &rarr;</p>
+                </a>
+              </div>
+
+              <div class="grid gap-4 md:grid-cols-2">
+                <div class="bg-white border border-gray-200 rounded-xl p-6">
+                  <h2 class="font-display text-lg font-bold text-loca-dark">You can do all of this yourself</h2>
+                  <ul class="mt-3 space-y-2 text-sm text-gray-600">
+                    <li class="flex gap-2"><span class="text-loca-primary font-bold">&#10003;</span> Write and publish news stories</li>
+                    <li class="flex gap-2"><span class="text-loca-primary font-bold">&#10003;</span> Edit the four program pages</li>
+                    <li class="flex gap-2"><span class="text-loca-primary font-bold">&#10003;</span> Upload photos and documents (PDFs)</li>
+                    <li class="flex gap-2"><span class="text-loca-primary font-bold">&#10003;</span> Update homepage numbers and contact details</li>
+                    <li class="flex gap-2"><span class="text-loca-primary font-bold">&#10003;</span> Read and reply to website messages</li>
+                    <li class="flex gap-2"><span class="text-loca-primary font-bold">&#10003;</span> Change your panel password</li>
+                  </ul>
+                </div>
+                <div class="bg-loca-light border border-loca-primary/20 rounded-xl p-6">
+                  <h2 class="font-display text-lg font-bold text-loca-dark">Your web team handles</h2>
+                  <p class="mt-3 text-sm text-loca-dark/80 leading-relaxed">
+                    Design, colors, logo, new page types and any bigger feature - exactly like before.
+                    Just send a message describing what you want and they take care of it.
+                  </p>
+                  <p class="mt-3 text-sm text-loca-dark/80">
+                    Bookmark this page: <span class="font-semibold">localliance.org/panel</span> - on your phone use
+                    browser menu &rarr; "Add to Home screen" and it opens with one tap, like an app.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            <!-- ================= INBOX ================= -->
+            <section id="tab-inbox" class="hidden space-y-4">
+              <h1 class="font-display text-xl font-bold text-loca-dark">Inbox</h1>
+              <div class="flex flex-wrap items-center gap-2">
+                <button id="chip-all" type="button" class="chip active">All</button>
+                <button id="chip-unread" type="button" class="chip">
+                  Unread <span id="chip-unread-count" class="hidden font-bold"></span>
+                </button>
+                <input
+                  id="inbox-search"
+                  type="search"
+                  placeholder="Search name, email, text..."
+                  aria-label="Search messages"
+                  class="flex-1 min-w-[180px] border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-loca-primary"
+                />
+                <button id="mark-all-btn" type="button" class="text-sm font-semibold text-loca-primary hover:text-loca-dark px-2 py-2.5">
+                  Mark all read
+                </button>
+                <button id="refresh-btn" type="button" class="text-sm font-semibold text-loca-primary hover:text-loca-dark px-2 py-2.5">
+                  Refresh
+                </button>
+              </div>
+              <div id="inbox-loading" class="text-sm text-gray-500">Loading messages...</div>
+              <div id="inbox-empty" class="hidden bg-white border border-gray-200 rounded-2xl p-8 text-center">
+                <p id="inbox-empty-title" class="font-semibold text-loca-dark">No messages here yet</p>
+                <p id="inbox-empty-body" class="text-sm text-gray-500 mt-1">
+                  Every message sent from the website "Partner With Us" form appears in this inbox automatically.
+                </p>
+              </div>
+              <div id="inbox-list" class="space-y-3"></div>
+            </section>
+
+            <!-- ================= EMAIL ================= -->
+            <section id="tab-email" class="hidden space-y-4">
+              <h1 class="font-display text-xl font-bold text-loca-dark">Email</h1>
+              <div class="bg-white border border-gray-200 rounded-xl p-6">
+                <h2 class="font-display text-lg font-bold text-loca-dark">Your email address: info@localliance.org</h2>
+                <p class="mt-2 text-sm text-gray-600 leading-relaxed">
+                  Any email sent to info@localliance.org is delivered automatically to your Gmail inbox - partners, donors,
+                  ministries, anyone. Just hit Reply to answer; your reply goes straight back to the sender.
+                </p>
+                <p class="mt-2 text-sm text-gray-600 leading-relaxed">
+                  The forwarding is managed by your web team in the Cloudflare dashboard. To change the destination inbox or
+                  switch on more addresses, contact them - it takes one minute.
+                </p>
+              </div>
+              <div class="bg-white border border-gray-200 rounded-xl p-6">
+                <h2 class="font-display text-lg font-bold text-loca-dark">Get an email copy of every form message</h2>
+                <p class="mt-2 text-sm text-gray-600 leading-relaxed">
+                  The Inbox tab always shows every "Partner With Us" message sent from the website. If you also want a copy
+                  of each message delivered to your Gmail, ask your web team to switch on email notifications - it is free
+                  and takes them a few minutes.
+                </p>
+              </div>
+              <div class="bg-white border border-gray-200 rounded-xl p-6">
+                <h2 class="font-display text-lg font-bold text-loca-dark">Separate team mailboxes later</h2>
+                <p class="mt-2 text-sm text-gray-600 leading-relaxed">
+                  If you ever want real mailboxes with their own logins (team@localliance.org, finance@localliance.org...),
+                  your web team can add classic cPanel hosting for the email part only. Your website stays exactly as it is.
+                </p>
+              </div>
+            </section>
+
+            <!-- ================= WEBSITE ================= -->
+            <section id="tab-website" class="hidden space-y-4">
+              <h1 class="font-display text-xl font-bold text-loca-dark">Website</h1>
+              <div class="grid gap-4 md:grid-cols-2">
+                <a href="/" target="_blank" rel="noopener" class="bg-white border border-gray-200 rounded-xl p-6 hover:border-loca-primary transition-colors">
+                  <h2 class="font-display text-lg font-bold text-loca-dark">View website</h2>
+                  <p class="mt-1 text-sm text-gray-600">Open the public site exactly as visitors see it.</p>
+                  <p class="mt-3 text-sm font-semibold text-loca-primary">Open &rarr;</p>
+                </a>
+                <a href="/admin" class="bg-white border border-gray-200 rounded-xl p-6 hover:border-loca-primary transition-colors">
+                  <h2 class="font-display text-lg font-bold text-loca-dark">Edit news &amp; content</h2>
+                  <p class="mt-1 text-sm text-gray-600">
+                    Publish news posts, edit program pages, upload PDFs and photos, update homepage numbers.
+                    Signs in with the GitHub account your web team set up for you.
+                  </p>
+                  <p class="mt-3 text-sm font-semibold text-loca-primary">Open the editor &rarr;</p>
+                </a>
+                <a href="/resources" class="bg-white border border-gray-200 rounded-xl p-6 hover:border-loca-primary transition-colors">
+                  <h2 class="font-display text-lg font-bold text-loca-dark">Resources page</h2>
+                  <p class="mt-1 text-sm text-gray-600">Check the documents and downloads shown to the public.</p>
+                  <p class="mt-3 text-sm font-semibold text-loca-primary">Open &rarr;</p>
+                </a>
+                <div class="bg-loca-light border border-loca-primary/20 rounded-xl p-6">
+                  <h2 class="font-display text-lg font-bold text-loca-dark">Design changes</h2>
+                  <p class="mt-1 text-sm text-loca-dark/80 leading-relaxed">
+                    New pages, new colors, photos, logo changes or any bigger feature - your web team does those for you. Just
+                    send a message describing what you want.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            <!-- ================= SETTINGS ================= -->
+            <section id="tab-settings" class="hidden space-y-4">
+              <h1 class="font-display text-xl font-bold text-loca-dark">Settings</h1>
+              <form id="password-form" class="bg-white border border-gray-200 rounded-xl p-6 space-y-4 max-w-md" novalidate>
+                <h2 class="font-display text-lg font-bold text-loca-dark">Change your password</h2>
+                <div>
+                  <label for="pw-current" class="block text-sm font-semibold text-gray-700 mb-1.5">Current password</label>
+                  <input id="pw-current" type="password" autocomplete="current-password" required
+                    class="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:border-loca-primary" />
+                </div>
+                <div>
+                  <label for="pw-new" class="block text-sm font-semibold text-gray-700 mb-1.5">New password</label>
+                  <input id="pw-new" type="password" autocomplete="new-password" required
+                    class="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:border-loca-primary" />
+                  <p class="text-xs text-gray-400 mt-1">At least 8 characters. Pick something you will remember.</p>
+                </div>
+                <div>
+                  <label for="pw-confirm" class="block text-sm font-semibold text-gray-700 mb-1.5">Repeat new password</label>
+                  <input id="pw-confirm" type="password" autocomplete="new-password" required
+                    class="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:border-loca-primary" />
+                </div>
+                <button type="submit"
+                  class="w-full bg-loca-dark text-white font-bold py-3 rounded-xl hover:bg-loca-primary transition-colors disabled:opacity-60">
+                  Update password
+                </button>
+                <div id="password-status" class="hidden text-sm rounded-xl p-3 border" aria-live="polite"></div>
+                <p class="text-xs text-gray-400">Changing the password signs out your other devices - this device stays on.</p>
+              </form>
+              <div class="bg-loca-light border border-loca-primary/20 rounded-xl p-6 max-w-md">
+                <p class="font-bold text-loca-dark">Two quick tips</p>
+                <p class="mt-2 text-sm text-loca-dark/80">Bookmark this page: localliance.org/panel</p>
+                <p class="mt-1 text-sm text-loca-dark/80">
+                  On your phone: browser menu &rarr; "Add to Home screen" - the panel opens with one tap, like an app.
+                </p>
+              </div>
+              <button id="logout-btn-2" type="button" class="msg-btn msg-btn-danger max-w-md justify-center">
+                Sign out
+              </button>
+            </section>
+          </div>
+
+          <footer class="py-6 text-center text-xs text-gray-400">
+            LOCA Control Panel &middot; for authorized users only
+          </footer>
+        </main>
+      </div>
+    </div>
+
+    <script is:inline>
+      (function () {
+        'use strict';
+        var $ = function (id) { return document.getElementById(id); };
+        var state = { messages: [], unread: 0, filter: 'all', q: '' };
+
+        function show(el) { el.classList.remove('hidden'); }
+        function hide(el) { el.classList.add('hidden'); }
+
+        function fmtDate(iso) {
+          try {
+            return new Date(iso).toLocaleString(undefined, {
+              year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
+            });
+          } catch (e) { return String(iso); }
+        }
+
+        function statusBox(el, text, kind) {
+          el.textContent = text;
+          el.className = 'text-sm rounded-xl p-3 border ' +
+            (kind === 'error' ? 'bg-red-50 text-red-700 border-red-200' : kind === 'ok' ? 'bg-loca-light text-loca-dark border-loca-primary/30' : 'bg-gray-50 text-gray-700 border-gray-200');
+          show(el);
+        }
+
+        async function api(url, opts) {
+          var res = await fetch(url, opts || {});
+          var data = {};
+          try { data = await res.json(); } catch (e) { /* no body */ }
+          return { status: res.status, data: data };
+        }
+
+        function showLogin(hint) {
+          hide($('view-boot'));
+          hide($('view-app'));
+          var login = $('view-login');
+          login.classList.remove('hidden');
+          login.classList.add('flex');
+          if (hint) statusBox($('login-status'), hint, 'error'); else hide($('login-status'));
+          setTimeout(function () { $('login-password').focus(); }, 60);
+        }
+
+        function enterApp() {
+          hide($('view-boot'));
+          hide($('view-login'));
+          var app = $('view-app');
+          app.classList.remove('hidden');
+          app.classList.add('flex');
+          setTab('dashboard');
+          loadInbox();
+        }
+
+        function setTab(name) {
+          var buttons = document.querySelectorAll('.nav-item[data-tab]');
+          for (var i = 0; i < buttons.length; i++) {
+            buttons[i].classList.toggle('active', buttons[i].getAttribute('data-tab') === name);
+          }
+          var tabs = ['dashboard', 'inbox', 'email', 'website', 'settings'];
+          for (var j = 0; j < tabs.length; j++) {
+            var el = $('tab-' + tabs[j]);
+            if (tabs[j] === name) { show(el); } else { hide(el); }
+          }
+        }
+
+        async function loadInbox() {
+          show($('inbox-loading'));
+          hide($('inbox-empty'));
+          $('inbox-list').innerHTML = '';
+          var r = await api('/api/panel/inbox');
+          hide($('inbox-loading'));
+          if (r.status === 401) { showLogin('Your session ended. Please sign in again.'); return; }
+          if (r.status !== 200 || !r.data.ok) {
+            $('inbox-empty-title').textContent = 'The inbox could not be loaded';
+            $('inbox-empty-body').textContent = (r.data && r.data.error) ? r.data.error : 'Please try the Refresh button in a minute.';
+            show($('inbox-empty'));
+            return;
+          }
+          state.messages = r.data.messages || [];
+          state.unread = r.data.unread || 0;
+          renderInbox();
+        }
+
+        function updateBadge() {
+          var badge = $('unread-badge');
+          var chipCount = $('chip-unread-count');
+          if (state.unread > 0) {
+            badge.textContent = String(state.unread);
+            chipCount.textContent = '(' + state.unread + ')';
+            show(badge); show(chipCount);
+          } else {
+            hide(badge); hide(chipCount);
+          }
+          var gt = $('glance-total');
+          var gu = $('glance-unread');
+          if (gt) gt.textContent = String(state.messages.length);
+          if (gu) gu.textContent = String(state.unread);
+        }
+
+        function renderInbox() {
+          updateBadge();
+          var list = $('inbox-list');
+          list.innerHTML = '';
+          var msgs = state.messages.filter(function (m) {
+            return state.filter === 'all' || !m.read_at;
+          });
+          if (state.q) {
+            msgs = msgs.filter(function (m) {
+              return ((m.name + ' ' + m.email + ' ' + m.subject + ' ' + m.message).toLowerCase().indexOf(state.q) !== -1);
+            });
+          }
+          if (msgs.length === 0) {
+            if (state.messages.length === 0) {
+              $('inbox-empty-title').textContent = 'No messages here yet';
+              $('inbox-empty-body').textContent = 'Every message sent from the website "Partner With Us" form appears in this inbox automatically.';
+            } else {
+              $('inbox-empty-title').textContent = 'Nothing matches this view';
+              $('inbox-empty-body').textContent = 'Try the other filter chip or clear the search box.';
+            }
+            show($('inbox-empty'));
+            return;
+          }
+          hide($('inbox-empty'));
+          for (var i = 0; i < msgs.length; i++) list.appendChild(messageCard(msgs[i]));
+        }
+
+        function actionBtn(label, cls, onClick) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = cls;
+          b.textContent = label;
+          b.addEventListener('click', onClick);
+          return b;
+        }
+
+        async function postAction(action, id) {
+          var r = await api('/api/panel/inbox', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: action, id: id }),
+          });
+          if (r.status === 401) { showLogin('Your session ended. Please sign in again.'); return false; }
+          return r.status === 200 && r.data.ok === true;
+        }
+
+        async function markOne(m, action) {
+          var ok = await postAction(action, m.id);
+          if (!ok) return;
+          if (action === 'read' && !m.read_at) { m.read_at = Date.now(); state.unread = Math.max(0, state.unread - 1); }
+          if (action === 'unread') { if (m.read_at) state.unread += 1; m.read_at = null; }
+          if (action === 'delete') {
+            if (!m.read_at) state.unread = Math.max(0, state.unread - 1);
+            state.messages = state.messages.filter(function (x) { return x.id !== m.id; });
+          }
+          renderInbox();
+        }
+
+        function messageCard(m) {
+          var card = document.createElement('article');
+          card.className = 'bg-white border rounded-xl p-5 ' + (m.read_at ? 'border-gray-200' : 'border-loca-primary/50 shadow-sm');
+
+          var head = document.createElement('div');
+          head.className = 'flex items-start justify-between gap-3';
+          var who = document.createElement('div');
+          var nameP = document.createElement('p');
+          nameP.className = 'font-bold text-loca-dark';
+          nameP.textContent = m.name;
+          if (!m.read_at) {
+            var dot = document.createElement('span');
+            dot.className = 'inline-block h-2 w-2 rounded-full bg-loca-primary ml-2 align-middle';
+            nameP.appendChild(dot);
+          }
+          var metaP = document.createElement('p');
+          metaP.className = 'text-xs text-gray-500 mt-0.5';
+          metaP.textContent = m.email + '  \u00b7  ' + fmtDate(m.created_at);
+          who.appendChild(nameP);
+          who.appendChild(metaP);
+          var chip = document.createElement('span');
+          chip.className = 'shrink-0 text-xs font-semibold text-loca-primary bg-loca-light rounded-full px-3 py-1';
+          chip.textContent = m.subject || 'Message';
+          head.appendChild(who);
+          head.appendChild(chip);
+          card.appendChild(head);
+
+          var bodyP = document.createElement('p');
+          bodyP.className = 'mt-3 text-sm leading-relaxed text-gray-700 whitespace-pre-line';
+          bodyP.textContent = m.message;
+          card.appendChild(bodyP);
+
+          var actions = document.createElement('div');
+          actions.className = 'mt-4 flex flex-wrap gap-2';
+          var reply = document.createElement('a');
+          reply.className = 'msg-btn msg-btn-primary';
+          reply.href = 'mailto:' + encodeURIComponent(m.email) +
+            '?subject=' + encodeURIComponent('Re: ' + (m.subject || 'Your message') + ' - LOCA');
+          reply.textContent = 'Reply';
+          reply.addEventListener('click', function () { if (!m.read_at) markOne(m, 'read'); });
+          actions.appendChild(reply);
+          if (m.read_at) {
+            actions.appendChild(actionBtn('Mark unread', 'msg-btn', function () { markOne(m, 'unread'); }));
+          } else {
+            actions.appendChild(actionBtn('Mark read', 'msg-btn', function () { markOne(m, 'read'); }));
+          }
+          actions.appendChild(actionBtn('Delete', 'msg-btn msg-btn-danger', function () {
+            if (window.confirm('Delete this message?')) markOne(m, 'delete');
+          }));
+          card.appendChild(actions);
+          return card;
+        }
+
+        async function doLogout() {
+          await api('/api/panel/logout', { method: 'POST' });
+          showLogin();
+        }
+
+        // ---- wire up events ----
+        var tabButtons = document.querySelectorAll('.nav-item[data-tab]');
+        for (var t = 0; t < tabButtons.length; t++) {
+          tabButtons[t].addEventListener('click', function (e) { setTab(e.currentTarget.getAttribute('data-tab')); });
+        }
+
+        var gotoButtons = document.querySelectorAll('[data-tab-goto]');
+        for (var g = 0; g < gotoButtons.length; g++) {
+          gotoButtons[g].addEventListener('click', function (e) {
+            setTab(e.currentTarget.getAttribute('data-tab-goto'));
+            if (e.currentTarget.getAttribute('data-tab-goto') === 'inbox') loadInbox();
+          });
+        }
+
+        $('chip-all').addEventListener('click', function () {
+          state.filter = 'all';
+          $('chip-all').classList.add('active');
+          $('chip-unread').classList.remove('active');
+          renderInbox();
+        });
+        $('chip-unread').addEventListener('click', function () {
+          state.filter = 'unread';
+          $('chip-unread').classList.add('active');
+          $('chip-all').classList.remove('active');
+          renderInbox();
+        });
+        $('inbox-search').addEventListener('input', function (e) {
+          state.q = e.target.value.trim().toLowerCase();
+          renderInbox();
+        });
+        $('refresh-btn').addEventListener('click', function () { loadInbox(); });
+        $('mark-all-btn').addEventListener('click', async function () {
+          var ok = await postAction('read-all');
+          if (ok) loadInbox();
+        });
+
+        $('login-form').addEventListener('submit', async function (e) {
+          e.preventDefault();
+          var btn = $('login-btn');
+          btn.disabled = true;
+          hide($('login-status'));
+          try {
+            var r = await api('/api/panel/login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ password: $('login-password').value, stay: $('login-stay').checked }),
+            });
+            if (r.status === 200 && r.data.ok) {
+              $('login-password').value = '';
+              enterApp();
+            } else {
+              statusBox($('login-status'), (r.data && r.data.error) || 'Sign in failed. Please try again.', 'error');
+            }
+          } catch (err) {
+            statusBox($('login-status'), 'Network problem. Please check your connection and try again.', 'error');
+          } finally {
+            btn.disabled = false;
+          }
+        });
+
+        $('password-form').addEventListener('submit', async function (e) {
+          e.preventDefault();
+          var box = $('password-status');
+          var current = $('pw-current').value;
+          var next = $('pw-new').value;
+          var confirm = $('pw-confirm').value;
+          if (next !== confirm) { statusBox(box, 'The two new passwords do not match.', 'error'); return; }
+          if (next.length < 8) { statusBox(box, 'The new password needs at least 8 characters.', 'error'); return; }
+          try {
+            var r = await api('/api/panel/password', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ current: current, next: next }),
+            });
+            if (r.status === 401) { showLogin('Your session ended. Please sign in again.'); return; }
+            if (r.status === 200 && r.data.ok) {
+              $('pw-current').value = '';
+              $('pw-new').value = '';
+              $('pw-confirm').value = '';
+              statusBox(box, r.data.message || 'Password updated.', 'ok');
+            } else {
+              statusBox(box, (r.data && r.data.error) || 'Could not update the password.', 'error');
+            }
+          } catch (err) {
+            statusBox(box, 'Network problem. Please try again.', 'error');
+          }
+        });
+
+        $('logout-btn').addEventListener('click', doLogout);
+        $('logout-btn-2').addEventListener('click', doLogout);
+
+        // ---- boot ----
+        (async function () {
+          try {
+            var r = await api('/api/panel/inbox');
+            if (r.status === 200 && r.data.ok) enterApp();
+            else if (r.status === 401) showLogin('');
+            else showLogin((r.data && r.data.error) ? r.data.error : '');
+          } catch (err) {
+            showLogin('Network problem. Please check your connection and try again.');
+          }
+        })();
+      })();
+    </script>
+  </body>
+</html>

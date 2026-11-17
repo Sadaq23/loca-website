@@ -1,0 +1,90 @@
+# LOCA website - content editor configuration (Decap CMS)
+# Editors log in with GitHub; every "Publish" commits to the
+# repo and Cloudflare rebuilds the site automatically.
+backend:
+  name: github
+  repo: Sadaq23/loca-website
+  branch: main
+  auth_type: pkce
+  app_id: Ov23liCpKQluSqOIX6rt
+
+site_url: https://www.localliance.org
+base_url: https://www.localliance.org
+display_url: https://www.localliance.org
+locale: 'en'
+
+media_folder: 'public/images/uploads'
+public_folder: '/images/uploads'
+
+collections:
+  - name: 'news'
+    label: 'News & Stories'
+    label_singular: 'Story'
+    folder: 'src/content/news'
+    create: true
+    slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
+    sortable_fields: ['date', 'title']
+    editor: { preview: false }
+    fields:
+      - { label: 'Title', name: 'title', widget: 'string' }
+      - { label: 'Date', name: 'date', widget: 'datetime', format: 'YYYY-MM-DD', date_format: 'YYYY-MM-DD', time_format: false }
+      - { label: 'Tag', name: 'tag', widget: 'string', required: false, hint: 'e.g. Humanitarian, WASH, Economic Empowerment' }
+      - { label: 'Short summary', name: 'excerpt', widget: 'text', hint: 'Shown on the news cards' }
+      - { label: 'Cover image', name: 'image', widget: 'image', required: false }
+      - { label: 'Story text', name: 'body', widget: 'markdown', hint: 'The full article - supports bold, lists, links, headings and photos' }
+
+  - name: 'thematic_areas'
+    label: 'Program Pages'
+    label_singular: 'Program page'
+    folder: 'src/content/thematic_areas'
+    create: false
+    sortable_fields: ['order', 'title']
+    editor: { preview: false }
+    fields:
+      - { label: 'Title', name: 'title', widget: 'string' }
+      - { label: 'Short title (menus)', name: 'shortTitle', widget: 'string', required: false }
+      - { label: 'Card summary', name: 'description', widget: 'text' }
+      - { label: 'Cover image', name: 'image', widget: 'image', required: false }
+      - { label: 'Position number', name: 'order', widget: 'number', hint: 'Order shown in lists and menus' }
+      - { label: 'Page text', name: 'body', widget: 'markdown' }
+
+  - name: 'documents'
+    label: 'Resources & PDFs'
+    label_singular: 'Document'
+    editor: { preview: false }
+    media_folder: 'public/documents'
+    public_folder: '/documents'
+    files:
+      - name: 'documents_list'
+        label: 'Documents shown on the Resources page'
+        file: 'src/data/documents.json'
+        fields:
+          - label: 'Documents'
+            name: 'documents'
+            widget: 'list'
+            hint: 'Add a document and upload its PDF. Leave the PDF empty to show "Request a copy" by email instead.'
+            fields:
+              - { label: 'Title', name: 'title', widget: 'string' }
+              - { label: 'Description', name: 'meta', widget: 'string' }
+              - { label: 'PDF file', name: 'file', widget: 'file', required: false }
+
+  - name: 'settings'
+    label: 'Site Settings'
+    editor: { preview: false }
+    files:
+      - name: 'general'
+        label: 'Statistics & Contact Details'
+        file: 'src/data/site-settings.json'
+        fields:
+          - { label: 'Contact email', name: 'email', widget: 'string' }
+          - { label: 'Phone (technical form, e.g. +252615508438)', name: 'phone', widget: 'string' }
+          - { label: 'Phone (as displayed, e.g. +252 615 508 438)', name: 'phoneDisplay', widget: 'string' }
+          - { label: 'Head office address', name: 'address', widget: 'string' }
+          - label: 'Homepage statistics'
+            name: 'stats'
+            widget: 'list'
+            hint: 'The four big numbers on the homepage'
+            fields:
+              - { label: 'Value (number only)', name: 'value', widget: 'number' }
+              - { label: 'Suffix (k+, %, or leave empty)', name: 'suffix', widget: 'string', required: false }
+              - { label: 'Label', name: 'label', widget: 'string' }
