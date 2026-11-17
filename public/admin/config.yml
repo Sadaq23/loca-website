@@ -1,20 +1,15 @@
-# LOCA website - content editor configuration (Decap CMS)
-# Editors log in with GitHub; every "Publish" commits to the
-# repo and Cloudflare rebuilds the site automatically.
 backend:
   name: github
   repo: Sadaq23/loca-website
   branch: main
-  auth_type: pkce
-  app_id: Ov23liCpKQluSqOIX6rt
-
-site_url: https://www.localliance.org
-base_url: https://www.localliance.org
-display_url: https://www.localliance.org
-locale: 'en'
+  base_url: https://www.localliance.org
+  auth_endpoint: /api/auth
 
 media_folder: 'public/images/uploads'
 public_folder: '/images/uploads'
+site_url: https://www.localliance.org
+display_url: https://www.localliance.org
+locale: 'en'
 
 collections:
   - name: 'news'
@@ -62,29 +57,3 @@ collections:
           - label: 'Documents'
             name: 'documents'
             widget: 'list'
-            hint: 'Add a document and upload its PDF. Leave the PDF empty to show "Request a copy" by email instead.'
-            fields:
-              - { label: 'Title', name: 'title', widget: 'string' }
-              - { label: 'Description', name: 'meta', widget: 'string' }
-              - { label: 'PDF file', name: 'file', widget: 'file', required: false }
-
-  - name: 'settings'
-    label: 'Site Settings'
-    editor: { preview: false }
-    files:
-      - name: 'general'
-        label: 'Statistics & Contact Details'
-        file: 'src/data/site-settings.json'
-        fields:
-          - { label: 'Contact email', name: 'email', widget: 'string' }
-          - { label: 'Phone (technical form, e.g. +252615508438)', name: 'phone', widget: 'string' }
-          - { label: 'Phone (as displayed, e.g. +252 615 508 438)', name: 'phoneDisplay', widget: 'string' }
-          - { label: 'Head office address', name: 'address', widget: 'string' }
-          - label: 'Homepage statistics'
-            name: 'stats'
-            widget: 'list'
-            hint: 'The four big numbers on the homepage'
-            fields:
-              - { label: 'Value (number only)', name: 'value', widget: 'number' }
-              - { label: 'Suffix (k+, %, or leave empty)', name: 'suffix', widget: 'string', required: false }
-              - { label: 'Label', name: 'label', widget: 'string' }
