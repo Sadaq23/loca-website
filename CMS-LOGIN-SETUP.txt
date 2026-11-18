@@ -1,0 +1,42 @@
+LOCA WEBSITE - HOW THE CLIENT LOGS INTO THE ADMIN PANEL (/admin)
+=================================================================
+
+HOW IT WORKS (one paragraph)
+  /admin is a friendly editor for the website content. Every
+  "Publish" saves a new version into the GitHub repo
+  (Sadaq23/loca-website), and Cloudflare automatically rebuilds
+  the live site about a minute later. Logging in goes through a
+  small login server on the website itself (/api/auth), which
+  safely holds the GitHub secret; editors never see it.
+
+ONE-TIME SETTINGS (developer, already done in phase 9)
+  1. GitHub OAuth App (github.com/settings/developers):
+       Homepage URL:               https://www.localliance.org
+       Authorization callback URL: https://www.localliance.org/api/auth/callback
+  2. Cloudflare (Workers & Pages -> loca-website -> Settings ->
+     Environment variables -> Production):
+       GITHUB_CLIENT_ID     = the OAuth App Client ID
+       GITHUB_CLIENT_SECRET = the OAuth App Client Secret
+  3. Invite editors: GitHub repo -> Settings -> Collaborators.
+
+DAILY USE (client)
+  1. Open  https://www.localliance.org/admin
+  2. Click "Log in with GitHub", sign in with your GitHub
+     account, click "Authorize".
+  3. Edit News, Program pages, Resources PDFs, Site Settings.
+  4. Click "Publish". The live site updates in about 1-2 minutes.
+  5. Every change is saved in GitHub history - nothing is ever
+     lost, and any change can be undone.
+
+IF LOGIN EVER FAILS
+  - "redirect_uri mismatch" on github.com:
+      the OAuth App callback URL is not exactly
+      https://www.localliance.org/api/auth/callback
+  - popup shows the website homepage:
+      the login server is not deployed - redeploy the repo
+  - "Login server not configured":
+      GITHUB_CLIENT_ID / GITHUB_CLIENT_SECRET missing in
+      Cloudflare Production environment variables
+  - "Your account does not have access to this site":
+      your GitHub account has not been added as a collaborator
+      on the repo yet.

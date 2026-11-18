@@ -1,0 +1,60 @@
+
+backend:
+  name: github
+  repo: Sadaq23/loca-website
+  branch: main
+
+  base_url: https://www.localliance.org
+  auth_endpoint: api/auth
+site_url: https://www.localliance.org
+display_url: https://www.localliance.org
+media_folder: 'public/images/uploads'
+public_folder: '/images/uploads'
+locale: 'en'
+
+collections:
+  - name: 'news'
+    label: 'News & Stories'
+    label_singular: 'Story'
+    folder: 'src/content/news'
+    create: true
+    slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
+    sortable_fields: ['date', 'title']
+    editor: { preview: false }
+    fields:
+      - { label: 'Title', name: 'title', widget: 'string' }
+      - { label: 'Date', name: 'date', widget: 'datetime', format: 'YYYY-MM-DD', date_format: 'YYYY-MM-DD', time_format: false }
+      - { label: 'Tag', name: 'tag', widget: 'string', required: false, hint: 'e.g. Humanitarian, WASH, Economic Empowerment' }
+      - { label: 'Short summary', name: 'excerpt', widget: 'text', hint: 'Shown on the news cards' }
+      - { label: 'Cover image', name: 'image', widget: 'image', required: false }
+      - { label: 'Story text', name: 'body', widget: 'markdown', hint: 'The full article - supports bold, lists, links, headings and photos' }
+
+  - name: 'thematic_areas'
+    label: 'Program Pages'
+    label_singular: 'Program page'
+    folder: 'src/content/thematic_areas'
+    create: false
+    sortable_fields: ['order', 'title']
+    editor: { preview: false }
+    fields:
+      - { label: 'Title', name: 'title', widget: 'string' }
+      - { label: 'Short title (menus)', name: 'shortTitle', widget: 'string', required: false }
+      - { label: 'Card summary', name: 'description', widget: 'text' }
+      - { label: 'Cover image', name: 'image', widget: 'image', required: false }
+      - { label: 'Position number', name: 'order', widget: 'number', hint: 'Order shown in lists and menus' }
+      - { label: 'Page text', name: 'body', widget: 'markdown' }
+
+  - name: 'documents'
+    label: 'Resources & PDFs'
+    label_singular: 'Document'
+    editor: { preview: false }
+    media_folder: 'public/documents'
+    public_folder: '/documents'
+    files:
+      - name: 'documents_list'
+        label: 'Documents shown on the Resources page'
+        file: 'src/data/documents.json'
+        fields:
+          - label: 'Documents'
+            name: 'documents'
+            widget: 'list'
