@@ -1,0 +1,48 @@
+media:
+  input: public/images/uploads
+  output: /images/uploads
+
+content:
+  - name: news
+    label: News
+    type: collection
+    path: src/content/news
+    filename: "{year}-{month}-{day}-{fields.title}.md"
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: date
+        label: Publish Date
+        type: date
+        required: true
+      - name: summary
+        label: Summary
+        type: text
+      - name: image
+        label: Cover Image
+        type: image
+      - name: body
+        label: Body
+        type: rich-text
+
+  - name: thematic_areas
+    label: Thematic Areas
+    type: collection
+    path: src/content/thematic_areas
+    filename: "{fields.title}.md"
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: summary
+        label: Summary
+        type: text
+      - name: image
+        label: Image
+        type: image
+      - name: body
+        label: Body
+        type: rich-text
