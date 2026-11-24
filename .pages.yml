@@ -17,9 +17,10 @@ content:
         label: Publish Date
         type: date
         required: true
-      - name: summary
-        label: Summary
+      - name: excerpt
+        label: Excerpt
         type: text
+        required: true
       - name: image
         label: Cover Image
         type: image
